@@ -1,6 +1,6 @@
 namespace Minecraft.API.Models.DTOs;
 
-public class RegisterDto
+public class RegisterRequestDto
 {
     public string Email { get; set; } = string.Empty;
     public string Username { get; set; } = string.Empty;

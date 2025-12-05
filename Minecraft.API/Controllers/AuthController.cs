@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Minecraft.API.Models.DTOs;
 using Minecraft.API.Services;
@@ -14,14 +16,62 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+    public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerDto)
     {
-        if (!ModelState.IsValid)
+        var result = await _authService.RegisterAsync(registerDto);
+
+        if (result.Success)
         {
-            return BadRequest(ModelState);
+            return Ok(result);
         }
 
-        var result = await _authService.RegisterAsync(registerDto);
+        return BadRequest(result);
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequestDto loginDto)
+    {
+        var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var deviceInfo = Request.Headers.UserAgent.ToString();
+
+        var result = await _authService.LoginAsync(loginDto, ipAddress, deviceInfo);
+
+        if (result.Success)
+        {
+            return Ok(result);
+        }
+
+        return BadRequest(result);
+    }
+
+    [HttpPost("logout")]
+    [Authorize]
+    public async Task<IActionResult> Logout([FromBody] RefreshTokenRequestDto refreshTokenDto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new { message = "User not authenticated" });
+        }
+
+        var result = await _authService.LogoutAsync(userId, refreshTokenDto.RefreshToken);
+
+        if (result.Success)
+        {
+            return Ok(result);
+        }
+
+        return BadRequest(result);
+    }
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenDto)
+    {
+        var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var deviceInfo = Request.Headers.UserAgent.ToString();
+
+        var result = await _authService.RefreshTokenAsync(refreshTokenDto.RefreshToken, ipAddress, deviceInfo);
 
         if (result.Success)
         {

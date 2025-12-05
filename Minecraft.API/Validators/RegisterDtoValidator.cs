@@ -3,7 +3,7 @@ using Minecraft.API.Models.DTOs;
 
 namespace Minecraft.API.Validators;
 
-public class RegisterDtoValidator : AbstractValidator<RegisterDto>
+public class RegisterDtoValidator : AbstractValidator<RegisterRequestDto>
 {
     public RegisterDtoValidator()
     {
