@@ -9,11 +9,11 @@ using PDFHub.API.Data;
 
 #nullable disable
 
-namespace PDFHub.API.Migrations
+namespace PDFHub.Migrations
 {
     [DbContext(typeof(PDFHubDbContext))]
-    [Migration("20251205042549_AddRefreshTokenTable")]
-    partial class AddRefreshTokenTable
+    [Migration("20251205072153_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -221,7 +221,31 @@ namespace PDFHub.API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("PDFHub.API.Models.RefreshToken", b =>
+            modelBuilder.Entity("PDFHub.API.Models.Domains.PdfFiles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("StoredFilePath")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PdfFiles");
+                });
+
+            modelBuilder.Entity("PDFHub.API.Models.Domains.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -319,7 +343,7 @@ namespace PDFHub.API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PDFHub.API.Models.RefreshToken", b =>
+            modelBuilder.Entity("PDFHub.API.Models.Domains.RefreshToken", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
                         .WithMany()
