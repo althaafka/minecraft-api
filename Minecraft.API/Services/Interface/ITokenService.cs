@@ -7,6 +7,4 @@ public interface ITokenService
 {
     string GenerateAccessToken(IdentityUser user);
     string GenerateRefreshToken();
-    ClaimsPrincipal? GetPrincipalFromExpiredToken(string token);
-    DateTime GetAccessTokenExpiration();
 }

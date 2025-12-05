@@ -51,46 +51,4 @@ public class TokenService : ITokenService
         return Convert.ToBase64String(randomNumber);
     }
 
-    public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
-    {
-        var jwtKey = _configuration["Jwt:Key"]
-            ?? throw new InvalidOperationException("JWT Key not configured");
-
-        var tokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = false,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
-            ClockSkew = TimeSpan.Zero
-        };
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-
-        try
-        {
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
-
-            if (securityToken is not JwtSecurityToken jwtSecurityToken ||
-                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return null;
-            }
-
-            return principal;
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
-    public DateTime GetAccessTokenExpiration()
-    {
-        var expirationMinutes = int.Parse(
-            _configuration["Jwt:AccessTokenExpirationMinutes"] ?? "15"
-        );
-        return DateTime.UtcNow.AddMinutes(expirationMinutes);
-    }
 }
