@@ -5,6 +5,10 @@ using Minecraft.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 // Database Connection (MySQL)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<MinecraftDbContext>(options =>
@@ -19,20 +23,15 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
