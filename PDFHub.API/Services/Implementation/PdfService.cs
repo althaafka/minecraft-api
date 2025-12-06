@@ -162,4 +162,37 @@ public class PdfService : IPdfService
             return ServiceResult<List<PdfResponse>>.FailureResult("An error occurred while retrieving PDFs");
         }
     }
+
+    public async Task<ServiceResult> DeletePdfAsync(int id, string userId)
+    {
+        try
+        {
+            // Verify ownership
+            var pdfFile = await _pdfRepository.GetByIdAsync(id);
+
+            if (pdfFile == null)
+            {
+                return ServiceResult.FailureResult("PDF file not found");
+            }
+
+            if (pdfFile.UserId != userId)
+            {
+                return ServiceResult.FailureResult("Unauthorized: You don't have permission to delete this PDF");
+            }
+
+            // Soft delete
+            var deleted = await _pdfRepository.DeleteAsync(id);
+
+            if (!deleted)
+            {
+                return ServiceResult.FailureResult("Failed to delete PDF");
+            }
+
+            return ServiceResult.SuccessResult("PDF deleted successfully");
+        }
+        catch (Exception ex)
+        {
+            return ServiceResult.FailureResult("An error occurred while deleting the PDF");
+        }
+    }
 }

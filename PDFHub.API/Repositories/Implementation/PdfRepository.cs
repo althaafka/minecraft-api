@@ -25,13 +25,14 @@ public class PdfRepository : IPdfRepository
     {
         return await _context.PdfFiles
             .Include(p => p.User)
-            .FirstOrDefaultAsync(p => p.Id == id);
+            .FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
     }
 
     public async Task<IEnumerable<PdfFiles>> GetAllAsync()
     {
         return await _context.PdfFiles
             .Include(p => p.User)
+            .Where(p => !p.IsDeleted)
             .ToListAsync();
     }
 
@@ -39,7 +40,7 @@ public class PdfRepository : IPdfRepository
     {
         return await _context.PdfFiles
             .Include(p => p.User)
-            .Where(p => p.UserId == userId)
+            .Where(p => p.UserId == userId && !p.IsDeleted)
             .ToListAsync();
     }
 
@@ -59,12 +60,13 @@ public class PdfRepository : IPdfRepository
     public async Task<bool> DeleteAsync(int id)
     {
         var pdfFile = await _context.PdfFiles.FindAsync(id);
-        if (pdfFile == null)
+        if (pdfFile == null || pdfFile.IsDeleted)
         {
             return false;
         }
 
-        _context.PdfFiles.Remove(pdfFile);
+        // Soft delete
+        pdfFile.IsDeleted = true;
         await _context.SaveChangesAsync();
         return true;
     }

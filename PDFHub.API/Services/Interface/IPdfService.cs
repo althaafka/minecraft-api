@@ -9,4 +9,5 @@ public interface IPdfService
     Task<ServiceResult<EditPdfResponse>> EditPdfAsync(int id, EditPdfRequestDto editDto, string userId);
     Task<ServiceResult<PdfResponse>> GetPdfByIdAsync(int id, string userId);
     Task<ServiceResult<List<PdfResponse>>> GetMyPdfsAsync(string userId);
+    Task<ServiceResult> DeletePdfAsync(int id, string userId);
 }

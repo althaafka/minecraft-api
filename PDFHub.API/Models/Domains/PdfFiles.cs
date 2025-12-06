@@ -10,6 +10,7 @@ public class PdfFiles
     public long FileSize {get; set;} // bytes
     public string Description {get; set;} = string.Empty;
     public string UserId {get; set;} = string.Empty;
+    public bool IsDeleted {get;set;} = false;
 
     // Relation
     public IdentityUser User {get; set;}
