@@ -1,6 +1,6 @@
 namespace PDFHub.API.Models.DTOs;
 
-public class UploadPdfResponse
+public class PdfResponse
 {
     public int Id { get; set; }
     public string FileName { get; set; } = string.Empty;

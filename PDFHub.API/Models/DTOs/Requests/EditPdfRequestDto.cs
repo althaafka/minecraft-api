@@ -1,7 +1,7 @@
-namespace PDFHub.Models.Dtos;
+namespace PDFHub.API.Models.DTOs;
 
 public class EditPdfRequestDto
 {
-    public string Filename{get; set;}
-    public string Description {get; set;}
+    public string Filename{get; set;} = string.Empty;
+    public string Description {get; set;} = string.Empty;
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PDFHub.API.Models.DTOs;
 using PDFHub.API.Services;
 using System.Security.Claims;
 
@@ -48,6 +49,46 @@ public class PdfController : ControllerBase
         }
 
         var result = await _pdfService.EditPdfAsync(id, editDto, userId);
+
+        if (!result.Success)
+        {
+            return BadRequest(new { message = result.Message });
+        }
+
+        return Ok(result);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetPdfById(int id)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new { message = "User not authenticated" });
+        }
+
+        var result = await _pdfService.GetPdfByIdAsync(id, userId);
+
+        if (!result.Success)
+        {
+            return BadRequest(new { message = result.Message });
+        }
+
+        return Ok(result);
+    }
+
+    [HttpGet("my")]
+    public async Task<IActionResult> GetMyPdfs()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new { message = "User not authenticated" });
+        }
+
+        var result = await _pdfService.GetMyPdfsAsync(userId);
 
         if (!result.Success)
         {

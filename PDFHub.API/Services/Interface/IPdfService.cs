@@ -5,6 +5,8 @@ namespace PDFHub.API.Services;
 
 public interface IPdfService
 {
-    Task<ServiceResult<UploadPdfResponse>> UploadPdfAsync(IFormFile file, string userId);
+    Task<ServiceResult<PdfResponse>> UploadPdfAsync(IFormFile file, string userId);
     Task<ServiceResult<EditPdfResponse>> EditPdfAsync(int id, EditPdfRequestDto editDto, string userId);
+    Task<ServiceResult<PdfResponse>> GetPdfByIdAsync(int id, string userId);
+    Task<ServiceResult<List<PdfResponse>>> GetMyPdfsAsync(string userId);
 }

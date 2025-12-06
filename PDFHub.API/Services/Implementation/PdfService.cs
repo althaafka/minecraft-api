@@ -19,20 +19,20 @@ public class PdfService : IPdfService
         _mapper = mapper;
     }
 
-    public async Task<ServiceResult<UploadPdfResponse>> UploadPdfAsync(IFormFile file, string userId)
+    public async Task<ServiceResult<PdfResponse>> UploadPdfAsync(IFormFile file, string userId)
     {
         try
         {
             // Validate file
             if (file == null || file.Length == 0)
             {
-                return ServiceResult<UploadPdfResponse>.FailureResult("No file uploaded");
+                return ServiceResult<PdfResponse>.FailureResult("No file uploaded");
             }
 
             // Validate PDF file type
             if (!file.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
             {
-                return ServiceResult<UploadPdfResponse>.FailureResult("Only PDF files are allowed");
+                return ServiceResult<PdfResponse>.FailureResult("Only PDF files are allowed");
             }
 
             // Create uploads directory if not exist
@@ -64,13 +64,13 @@ public class PdfService : IPdfService
             // Save to database
             var savedPdf = await _pdfRepository.AddAsync(pdfFile);
 
-            var response = _mapper.Map<UploadPdfResponse>(savedPdf);
+            var response = _mapper.Map<PdfResponse>(savedPdf);
 
-            return ServiceResult<UploadPdfResponse>.SuccessResult(response, "PDF uploaded successfully");
+            return ServiceResult<PdfResponse>.SuccessResult(response, "PDF uploaded successfully");
         }
         catch (Exception ex)
         {
-            return ServiceResult<UploadPdfResponse>.FailureResult("An error occurred while uploading the file");
+            return ServiceResult<PdfResponse>.FailureResult("An error occurred while uploading the file");
         }
     }
 
@@ -117,6 +117,49 @@ public class PdfService : IPdfService
         catch (Exception ex)
         {
             return ServiceResult<EditPdfResponse>.FailureResult("An error occurred while updating the PDF");
+        }
+    }
+
+    public async Task<ServiceResult<PdfResponse>> GetPdfByIdAsync(int id, string userId)
+    {
+        try
+        {
+            var pdfFile = await _pdfRepository.GetByIdAsync(id);
+
+            if (pdfFile == null)
+            {
+                return ServiceResult<PdfResponse>.FailureResult("PDF file not found");
+            }
+
+            // Verify ownership
+            if (pdfFile.UserId != userId)
+            {
+                return ServiceResult<PdfResponse>.FailureResult("Unauthorized: You don't have permission to view this PDF");
+            }
+
+            var response = _mapper.Map<PdfResponse>(pdfFile);
+
+            return ServiceResult<PdfResponse>.SuccessResult(response, "PDF retrieved successfully");
+        }
+        catch (Exception ex)
+        {
+            return ServiceResult<PdfResponse>.FailureResult("An error occurred while retrieving the PDF");
+        }
+    }
+
+    public async Task<ServiceResult<List<PdfResponse>>> GetMyPdfsAsync(string userId)
+    {
+        try
+        {
+            var pdfFiles = await _pdfRepository.GetByUserIdAsync(userId);
+
+            var response = _mapper.Map<List<PdfResponse>>(pdfFiles);
+
+            return ServiceResult<List<PdfResponse>>.SuccessResult(response, "PDFs retrieved successfully");
+        }
+        catch (Exception ex)
+        {
+            return ServiceResult<List<PdfResponse>>.FailureResult("An error occurred while retrieving PDFs");
         }
     }
 }

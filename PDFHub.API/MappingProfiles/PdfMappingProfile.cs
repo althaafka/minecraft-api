@@ -8,7 +8,7 @@ public class PdfMappingProfile : Profile
 {
     public PdfMappingProfile()
     {
-        CreateMap<PdfFiles, UploadPdfResponse>()
+        CreateMap<PdfFiles, PdfResponse>()
             .ForMember(dest => dest.UploadedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
 
         CreateMap<PdfFiles, EditPdfResponse>()
