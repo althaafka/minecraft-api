@@ -85,6 +85,7 @@ builder.Services.AddAuthorization();
 // Service Layer
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IPdfService, PdfService>();
 
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
