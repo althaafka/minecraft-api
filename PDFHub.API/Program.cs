@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using PDFHub.API.Data;
 using PDFHub.API.Services;
+using PDFHub.API.Repositories;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
@@ -81,6 +82,9 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
+
+// Repository Layer
+builder.Services.AddScoped<IPdfRepository, PdfRepository>();
 
 // Service Layer
 builder.Services.AddScoped<IAuthService, AuthService>();

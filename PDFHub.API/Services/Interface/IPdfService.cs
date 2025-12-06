@@ -1,5 +1,5 @@
 using PDFHub.API.Models;
-using PDFHub.API.Models.DTOs.Responses;
+using PDFHub.API.Models.DTOs;
 
 namespace PDFHub.API.Services;
 

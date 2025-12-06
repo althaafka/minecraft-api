@@ -11,6 +11,6 @@ public class PdfFiles
     public string Description {get; set;} = string.Empty;
     public string UserId {get; set;} = string.Empty;
 
-    // Navigation property
+    // Relation
     public IdentityUser User {get; set;}
 }

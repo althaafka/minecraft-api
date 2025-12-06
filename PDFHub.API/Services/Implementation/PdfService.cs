@@ -1,7 +1,7 @@
 using PDFHub.API.Data;
 using PDFHub.API.Models;
 using PDFHub.API.Models.Domains;
-using PDFHub.API.Models.DTOs.Responses;
+using PDFHub.API.Models.DTOs;
 
 namespace PDFHub.API.Services;
 
@@ -64,8 +64,8 @@ public class PdfService : IPdfService
             var response = new UploadPdfResponse
             {
                 Id = pdfFile.Id,
-                OriginalFileName = pdfFile.FileName,
-                StoredFilePath = pdfFile.FilePath,
+                FileName = pdfFile.FileName,
+                FilePath = pdfFile.FilePath,
                 FileSize = pdfFile.FileSize,
                 UploadedAt = DateTime.UtcNow
             };
